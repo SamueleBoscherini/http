@@ -22,26 +22,31 @@ public class Main {
                 BufferedReader in = new BufferedReader(new InputStreamReader(sc.getInputStream()));
                 PrintWriter out = new PrintWriter(sc.getOutputStream(), true);
                 String intestazione = in.readLine();
-                System.out.println(intestazione);
-                String request;
-                do {
-                    request = in.readLine();
-                    //System.out.println(request);
-                } while (!request.isEmpty());
-                String file = intestazione.split(" ", 3)[1];
-                File index;
-                if(file.contains("png") || file.contains("jpg")){
-                    index = new File("src/main/resources/dado/img/" + file);
-                    System.out.println("png");
+                if(intestazione.equals("")){
+                    out.println("HTTP/1.1 400 bad request");
                 } else {
-                    index = new File("src/main/resources/dado/" + file);
-                    System.out.println("altro");
+                    String request;
+                    do {
+                        request = in.readLine();
+                    } while (!request.isEmpty());
+                    String file = intestazione.split(" ", 3)[1];
+                    File index;
+                    if(file.equals("/")){
+                        index = new File("src/main/resources/index.html");
+                    } else {
+                        index = new File("src/main/resources/studenti/" + file);
+                    }
+                    
+                    if(index.exists()){
+                        prova(out,sc,index);
+                        System.out.println("\nCUCCCOOOOO\n");
+                    } else{
+                        System.out.println();
+                    }
+                
+
+                    sc.close();
                 }
-                if(index.exists())
-                    prova(out,sc,index);
-
-                sc.close();
-
             } while (true);
 
         }
@@ -52,6 +57,7 @@ public class Main {
         if (index.exists()) {
             out.println("HTTP/1.1 200 OK");
             out.println("Content-Length: " + index.length() + "");
+            System.out.println("Content type: " + getContentType(index));
             out.println("Content-Type: " + getContentType(index) + "");
             out.println("");
             InputStream input = new FileInputStream(index);
@@ -67,7 +73,7 @@ public class Main {
 
     private static String getContentType(File f) {
         String[] extension = f.getName().split("\\.",2);
-        System.out.println(extension[1]);
+        System.out.println("estensione: " + extension[1]);
         switch (extension[1]) {
             case "html":
                 System.out.println("ciao");
@@ -85,6 +91,24 @@ public class Main {
                 return "application/octet-stream";
         }
       }
+
+    private static String Method(String metodo){
+        switch (metodo) {
+            case "GET":
+                
+                break;
+            case "POST":
+                
+                break;
+            case "HEAD":
+                
+                break;
+        
+            default:
+                break;
+        }
+        return "";
+    }
 }
 
 
